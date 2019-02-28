@@ -32,6 +32,8 @@
 #define DSOS_ESEM_NAME  -14
 #define DSOS_ESEM_ALLOC -15
 #define DSOS_ESEM_DES_ALLOC -16
+#define DSOS_ESEM_DES_NOT_FOUD -17
+
 
 
 

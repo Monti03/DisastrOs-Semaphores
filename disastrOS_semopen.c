@@ -41,6 +41,7 @@ void internal_semOpen(){
   }
 
   //creaiamo il SemDescriptor
+  //lo creo anche se il semaforo è già stato aperto dal processo -> starà a lui chiudere tutti i descrittori aperti
   SemDescriptor* sem_des=SemDescriptor_alloc(running->last_fd, sem, running);
   if (! sem_des){
     //errore nella allocazione, può essere causato dal numero eccessivo di semafori aperti
