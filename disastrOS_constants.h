@@ -28,6 +28,14 @@
 #define DSOS_ERESOURCENOFD -11
 #define DSOS_ERESOURCECLOSE -12
 #define DSOS_ERESOURCEINUSE -13
+// sem errors
+#define DSOS_ESEM_NAME  -14
+#define DSOS_ESEM_ALLOC -15
+#define DSOS_ESEM_DES_ALLOC -16
+
+
+
+
 
 // syscall numbers
 #define DSOS_MAX_SYSCALLS 32
