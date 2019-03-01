@@ -142,6 +142,8 @@ void disastrOS_trap(){
 void disastrOS_start(void (*f)(void*), void* f_args, char* logfile){  
   /* INITIALIZATION OF SYSTEM STRUCTURES*/
   disastrOS_debug("initializing system structures\n");
+  Semaphore_init();
+  SemDescriptor_init();
   PCB_init();
   Timer_init();
   Resource_init();
@@ -285,6 +287,22 @@ void disastrOS_shutdown() {
 
 void disastrOS_sleep(int sleep_time) {
   disastrOS_syscall(DSOS_CALL_SLEEP, sleep_time);
+}
+
+void disastrOS_semOpen(int id) {
+  disastrOS_syscall(DSOS_CALL_SEMOPEN, id);
+}
+
+void disastrOS_semClose(int fd) {
+  disastrOS_syscall(DSOS_CALL_SEMCLOSE, fd);
+}
+
+void disastrOS_semPost(int fd) {
+  disastrOS_syscall(DSOS_CALL_SEMPOST, fd);
+}
+
+void disastrOS_semWait(int fd) {
+  disastrOS_syscall(DSOS_CALL_SEMWAIT, fd);
 }
 
 int disastrOS_getpid(){

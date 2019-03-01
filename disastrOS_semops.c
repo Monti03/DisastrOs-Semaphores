@@ -27,8 +27,9 @@ Semaphore* Semaphore_alloc(int id, int type){
     return 0;
   r->list.prev=r->list.next=0;
   r->id=id;
-  r->type=type;
+  r->count=type;
   List_init(&r->descriptors);
+  List_init(&r->waiting_descriptors);
   return r;
 }
 

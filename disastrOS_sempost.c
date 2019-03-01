@@ -27,19 +27,22 @@ void internal_semPost(){
   
   //incremento il semaforo
   sem->count ++;
-
-  //se il semaforo era a zero -> ora è a 1 -> avrò un processo in waiting
-  if(sem->count <= 1){
+  disastrOS_debug("il semaforo:%d è stato incrementato-> count:%d\n", sem->id, sem->count);
+  //se il semaforo era a -1 -> ora è a 0 -> avrò un processo in waiting
+  if(sem->count <= 0){
     
-    SemDescriptor* sem_desc_next = (SemDescriptor*) List_detach(&sem->waiting_descriptors, sem->waiting_descriptors.first);
+    SemDescriptor* sem_desc_next = (SemDescriptor*)List_detach(&sem->waiting_descriptors, sem->waiting_descriptors.first);
 
     //prendo il pcb del primo processo nella coda di waiting e setto a ready lo stato
     PCB* PCB_next = sem_desc_next->pcb;
     PCB_next->status=Ready;
+    disastrOS_debug("il processo:%d è stato messo in ready\n", PCB_next->pid);
+    printf("il processo:%d è stato messo in ready\n", PCB_next->pid);
 
     //libero la memoria
     SemDescriptorPtr_free(sem_desc_next);
 
+    List_insert(&ready_list, ready_list.first, (ListItem*) PCB_next);
   }
   running->syscall_retvalue = 0;
 }

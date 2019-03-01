@@ -25,11 +25,10 @@ void internal_semOpen(){
   //cerco tra i semafori aperti globalmente se è presente un semaforo con quell'id
   Semaphore* sem = SemaphoreList_byId((SemaphoreList*)&semaphores_list, id);
 
-
   if(!sem){
     //non è presente -> dobbiamo creare il semaforo
     sem = Semaphore_alloc(id, 1);
-    
+
     if( ! sem ){
       //errore nella allocazione, può essere causato dal numero eccessivo di semafori aperti
       running->syscall_retvalue = DSOS_ESEM_ALLOC; 
@@ -61,6 +60,8 @@ void internal_semOpen(){
   
   //inserisco sem_des_ptr tra i SemDescriptorPtr che puntatno al semaforo
   List_insert(&sem->descriptors, sem->descriptors.last, (ListItem*) sem_des_ptr);
+
+  disastrOS_debug("il processo:%d ha aperto il semaforo:%d\n",running->pid, sem->id);
 
   // return the FD of the new descriptor to the process
   running->syscall_retvalue = sem_des->fd; 

@@ -13,6 +13,7 @@ void sleeperFunction(void* args){
   }
 }
 
+
 void childFunction(void* args){
   printf("Hello, I am the child function %d\n",disastrOS_getpid());
   printf("I will iterate a bit, before terminating\n");
@@ -22,12 +23,40 @@ void childFunction(void* args){
   printf("fd=%d\n", fd);
   printf("PID: %d, terminating\n", disastrOS_getpid());
 
+  // apro i semafori
+  int sem1 = disastrOS_semOpen(0);
+  int sem2 = disastrOS_semOpen(disastrOS_getpid()*2);
+  // riapro il semaforo con id 0 -> avrò un fd diverso, ma le operazioni avverranno sullo stesso semaforo
+  int sem3 = disastrOS_semOpen(0);
+
   for (int i=0; i<(disastrOS_getpid()+1); ++i){
     printf("PID: %d, iterate %d\n", disastrOS_getpid(), i);
     disastrOS_sleep((20-disastrOS_getpid())*5);
+
+    // wait su i due semafori prima definiti 
+    // sem2 non bloccherà mai il processo poichè solo lui sarà connesso a quel semaforo
+    disastrOS_semWait(sem1);
+    disastrOS_semWait(sem2);
+
+    // supposed critical section
+    printf("processo %d in sezione critica!\n", disastrOS_getpid());
+    disastrOS_sleep((int)disastrOS_getpid()/2);
+
+    // posting after exiting from critical section
+    printf("processo %d è uscito dalla sezione critica!\n", disastrOS_getpid());
+    disastrOS_semPost(sem2);
+    disastrOS_semPost(sem3);
+
   }
+
+  // chiudo i semafori
+  disastrOS_semClose(sem1);
+  disastrOS_semClose(sem2);
+  disastrOS_semClose(sem3);
+
   disastrOS_exit(disastrOS_getpid()+1);
 }
+
 
 
 void initFunction(void* args) {

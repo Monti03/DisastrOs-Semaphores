@@ -10,8 +10,8 @@ void internal_semWait(){
   //decrements the given semaphore
   //if the semaphore was? 0, the caller is put onto wait
   //returns an error code
-  
-  // prendo il fc del semaforo dal pcb del processo in running, che ha chiamato la syscall
+
+  // prendo il fd del semaforo dal pcb del processo in running, che ha chiamato la syscall
   int fd = running->syscall_args[0];
 
   SemDescriptor* sem_des = SemDescriptorList_byFd((ListHead*)&(running->sem_descriptors),fd);
@@ -26,10 +26,13 @@ void internal_semWait(){
 
   //decremento il semaforo
   sem->count --;
-
+  disastrOS_debug("il semaforo:%d è stato decrementato-> count:%d\n", sem->id, sem->count);
   if(sem->count <= -1){
+    
     running->status=Waiting;
-
+    disastrOS_debug("il processo:%d è in wait nel semaforo:%d\n",running->pid, sem->id);
+    printf("il processo:%d è in wait nel semaforo:%d\n",running->pid, sem->id);
+    
     //alloco il descrittore da mettere nella coda di wait del semaforo
     SemDescriptor* sem_des = SemDescriptor_alloc(fd, sem, running);
     List_insert(&sem->waiting_descriptors, sem->waiting_descriptors.last, (ListItem*) sem_des);
@@ -38,6 +41,7 @@ void internal_semWait(){
     //che ho appena settato a waiting
     PCB* PCB_next = (PCB*)List_detach(&ready_list, ready_list.first);
     running=PCB_next;
+    disastrOS_debug("il processo:%d è messo in running manualmente\n",running->pid);
   }
 
   running->syscall_retvalue = 0;

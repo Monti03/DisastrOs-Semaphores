@@ -54,8 +54,9 @@ Semaphore* SemaphoreList_byId(SemaphoreList* l, int id) {
 void Semaphore_print(Semaphore* r) {
   printf("id: %d, count:%d, pids:", r->id, r->count);
   DescriptorPtrList_print(&r->descriptors);
+  printf("\n");
   printf("waiting: ");
-  DescriptorPtrList_print(&r->waiting_descriptors);
+  DescriptorList_print(&r->waiting_descriptors);
 }
 
 void SemaphoreList_print(ListHead* l){

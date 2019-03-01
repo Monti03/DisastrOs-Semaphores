@@ -2,6 +2,8 @@
 #include "disastrOS_pcb.h"
 #include "linked_list.h"
 
+//#define _DISASTROS_DEBUG_ 1
+
 #ifdef _DISASTROS_DEBUG_
 #include <stdio.h>
 
