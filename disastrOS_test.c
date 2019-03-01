@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <poll.h>
+#include <assert.h>
 
 #include "disastrOS.h"
 
@@ -25,9 +26,12 @@ void childFunction(void* args){
 
   // apro i semafori
   int sem1 = disastrOS_semOpen(0);
-  int sem2 = disastrOS_semOpen(disastrOS_getpid()*2);
+  int sem2 = disastrOS_semOpen(disastrOS_getpid());
   // riapro il semaforo con id 0 -> avrò un fd diverso, ma le operazioni avverranno sullo stesso semaforo
   int sem3 = disastrOS_semOpen(0);
+
+  //controllo che i descrittori siano validi -> se negativi c è stato un errore
+  assert(sem1 >= 0 && sem2 >= 0 && sem3 >= 0);
 
   for (int i=0; i<(disastrOS_getpid()+1); ++i){
     printf("PID: %d, iterate %d\n", disastrOS_getpid(), i);
@@ -87,7 +91,7 @@ void initFunction(void* args) {
 	   pid, retval, alive_children);
     --alive_children;
   }
-  printf("shutdown!");
+  printf("shutdown!\n");
   disastrOS_shutdown();
 }
 

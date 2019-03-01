@@ -31,16 +31,16 @@ void internal_semPost(){
   //se il semaforo era a -1 -> ora è a 0 -> avrò un processo in waiting
   if(sem->count <= 0){
     
-    SemDescriptor* sem_desc_next = (SemDescriptor*)List_detach(&sem->waiting_descriptors, sem->waiting_descriptors.first);
+    SemDescriptorPtr* sem_des_ptr_next = (SemDescriptorPtr*)List_detach(&sem->waiting_descriptors, sem->waiting_descriptors.first);
 
     //prendo il pcb del primo processo nella coda di waiting e setto a ready lo stato
-    PCB* PCB_next = sem_desc_next->pcb;
+    PCB* PCB_next = sem_des_ptr_next->descriptor->pcb;
     PCB_next->status=Ready;
     disastrOS_debug("il processo:%d è stato messo in ready\n", PCB_next->pid);
     printf("il processo:%d è stato messo in ready\n", PCB_next->pid);
 
     //libero la memoria
-    SemDescriptorPtr_free(sem_desc_next);
+    SemDescriptorPtr_free(sem_des_ptr_next);
 
     List_insert(&ready_list, ready_list.first, (ListItem*) PCB_next);
   }

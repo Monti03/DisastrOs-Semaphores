@@ -56,7 +56,7 @@ void Semaphore_print(Semaphore* r) {
   DescriptorPtrList_print(&r->descriptors);
   printf("\n");
   printf("waiting: ");
-  DescriptorList_print(&r->waiting_descriptors);
+  DescriptorPtrList_print(&r->waiting_descriptors);
 }
 
 void SemaphoreList_print(ListHead* l){

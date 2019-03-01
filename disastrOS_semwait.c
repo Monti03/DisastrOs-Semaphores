@@ -35,7 +35,11 @@ void internal_semWait(){
     
     //alloco il descrittore da mettere nella coda di wait del semaforo
     SemDescriptor* sem_des = SemDescriptor_alloc(fd, sem, running);
-    List_insert(&sem->waiting_descriptors, sem->waiting_descriptors.last, (ListItem*) sem_des);
+
+    //alloco il SemDescriptorPtr relativo a sem_des 
+    SemDescriptorPtr* sem_des_ptr =SemDescriptorPtr_alloc(sem_des);
+
+    List_insert(&sem->waiting_descriptors, sem->waiting_descriptors.last, (ListItem*) sem_des_ptr);
 
     //schedulo manualmente poichè la funzione che implementa lo scheduling setta a ready il processo
     //che ho appena settato a waiting
