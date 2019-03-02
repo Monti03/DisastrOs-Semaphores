@@ -15,7 +15,6 @@ void internal_semClose(){
   int fd = running->syscall_args[0];
 
   SemDescriptor* sem_des = SemDescriptorList_byFd((ListHead*)&(running->sem_descriptors),fd);
-
   //controllo che il descrittore sia valido
   if(!sem_des){
     running->syscall_retvalue = DSOS_ESEM_DES_NOT_FOUD;
@@ -40,7 +39,7 @@ void internal_semClose(){
   if(sem->descriptors.size == 0){
     //unlink
     disastrOS_debug("ilsemaforo:%dverrà eliminato\n", sem->id);
-    SemaphoreList_print(&(sem->descriptors));
+    //SemaphoreList_print(&(sem->descriptors));
     sem = (Semaphore*) List_detach(&semaphores_list, (ListItem*) sem);
     assert(sem);
     Semaphore_free(sem);

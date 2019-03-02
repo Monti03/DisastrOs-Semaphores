@@ -13,6 +13,12 @@ void internal_semOpen(){
   // on success, the function call returns semnum (>=0);
   // in failure the function returns an error code <0
   
+  //controllo che il processo non abbia aperto troppi descrittori
+  if(running -> sem_descriptors.size >= MAX_NUM_SEMDESCRIPTORS_PER_PROCESS){
+    running->syscall_retvalue = DSOS_ESEM_MAX_NUMBER_OF_SEMDESCRIPTORS; 
+    return;
+  }
+
   // prendo l'id del semaforo dal pcb del processo in running, che ha chiamato la syscall
   int id = running->syscall_args[0];
 
@@ -25,11 +31,11 @@ void internal_semOpen(){
   //cerco tra i semafori aperti globalmente se è presente un semaforo con quell'id
   Semaphore* sem = SemaphoreList_byId((SemaphoreList*)&semaphores_list, id);
 
-  if(!sem){
+  if(sem == 0){
     //non è presente -> dobbiamo creare il semaforo
     sem = Semaphore_alloc(id, 1);
 
-    if( ! sem ){
+    if(sem  == 0){
       //errore nella allocazione, può essere causato dal numero eccessivo di semafori aperti
       running->syscall_retvalue = DSOS_ESEM_ALLOC; 
       return;
@@ -41,14 +47,14 @@ void internal_semOpen(){
 
   //creaiamo il SemDescriptor
   //lo creo anche se il semaforo è già stato aperto dal processo -> starà a lui chiudere tutti i descrittori aperti
-  SemDescriptor* sem_des=SemDescriptor_alloc(running->last_fd, sem, running);
+  SemDescriptor* sem_des=SemDescriptor_alloc(running->last_sem_fd , sem, running);
   if (! sem_des){
     //errore nella allocazione, può essere causato dal numero eccessivo di semafori aperti
     running->syscall_retvalue=DSOS_ESEM_DES_ALLOC;
     return;
   }
   //aggiorno il fd che sarà dato al prossimo semaforo
-  running->last_fd++; 
+  running->last_sem_fd++; 
 
   //alloco il SemDescriptorPtr
   SemDescriptorPtr* sem_des_ptr =SemDescriptorPtr_alloc(sem_des);

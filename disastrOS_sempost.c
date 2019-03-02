@@ -36,6 +36,11 @@ void internal_semPost(){
     //prendo il pcb del primo processo nella coda di waiting e setto a ready lo stato
     PCB* PCB_next = sem_des_ptr_next->descriptor->pcb;
     PCB_next->status=Ready;
+
+    //rimuovo il processo dalla coda di wait e lo inserisco in ready
+    List_detach(&waiting_list, PCB_next);
+    List_insert(&ready_list,ready_list.last ,PCB_next);
+
     disastrOS_debug("il processo:%d è stato messo in ready\n", PCB_next->pid);
     printf("il processo:%d è stato messo in ready\n", PCB_next->pid);
 

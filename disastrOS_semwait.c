@@ -40,6 +40,10 @@ void internal_semWait(){
     SemDescriptorPtr* sem_des_ptr =SemDescriptorPtr_alloc(sem_des);
 
     List_insert(&sem->waiting_descriptors, sem->waiting_descriptors.last, (ListItem*) sem_des_ptr);
+    
+    //inserisco il processo nella coda di wait
+    List_insert(&waiting_list, waiting_list.last,running);
+
 
     //schedulo manualmente poichè la funzione che implementa lo scheduling setta a ready il processo
     //che ho appena settato a waiting
