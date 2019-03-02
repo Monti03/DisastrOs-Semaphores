@@ -46,10 +46,10 @@ void internal_semPost(){
 
     //libero la memoria: quando un processo viene bloccato da un semaforo 
     //alloco un nuovo descrittore e un nuovo descrittore_ptr -> quindi ora libero
-    int tmp_des = SemDescriptor_free(sem_des_ptr_next->descriptor);
+    //int tmp_des = SemDescriptor_free(sem_des_ptr_next->descriptor);
     int tmp_des_ptr = SemDescriptorPtr_free(sem_des_ptr_next);
 
-    assert(tmp_des == 0 && tmp_des_ptr == 0);
+    assert(tmp_des_ptr == 0);
 
     List_insert(&ready_list, ready_list.first, (ListItem*) PCB_next);
   }

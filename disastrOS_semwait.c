@@ -34,10 +34,11 @@ void internal_semWait(){
     printf("il processo:%d è in wait nel semaforo:%d\n",running->pid, sem->id);
     
     //alloco il descrittore da mettere nella coda di wait del semaforo
-    SemDescriptor* sem_des = SemDescriptor_alloc(fd, sem, running);
-
+    /* SemDescriptor* sem_des = SemDescriptor_alloc(fd, sem, running);
+    assert(sem_des); */
     //alloco il SemDescriptorPtr relativo a sem_des per metterlo nella coda dei descrittori in waiting
     SemDescriptorPtr* sem_des_ptr =SemDescriptorPtr_alloc(sem_des);
+    assert(sem_des_ptr);
 
     List_insert((ListHead*)&sem->waiting_descriptors,(ListItem*) sem->waiting_descriptors.last, (ListItem*) sem_des_ptr);
     

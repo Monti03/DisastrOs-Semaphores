@@ -58,7 +58,10 @@ void internal_semOpen(){
 
   //alloco il SemDescriptorPtr
   SemDescriptorPtr* sem_des_ptr =SemDescriptorPtr_alloc(sem_des);
-  
+  if (! sem_des_ptr){
+    running->syscall_retvalue=DSOS_ESEM_DES_PTR_ALLOC;
+    return;
+  }
   //inserisco sem_des tra i sem_descriptors aperti dal processo
   List_insert(&running->sem_descriptors, running->sem_descriptors.last, (ListItem*) sem_des);
   
@@ -70,5 +73,5 @@ void internal_semOpen(){
   disastrOS_debug("il processo:%d ha aperto il semaforo:%d\n",running->pid, sem->id);
 
   // return the FD of the new descriptor to the process
-  running->syscall_retvalue = sem_des->fd; 
+  running->syscall_retvalue = sem_des->fd;  
 }
