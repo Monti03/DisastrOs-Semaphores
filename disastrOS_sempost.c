@@ -38,14 +38,18 @@ void internal_semPost(){
     PCB_next->status=Ready;
 
     //rimuovo il processo dalla coda di wait e lo inserisco in ready
-    List_detach(&waiting_list, PCB_next);
-    List_insert(&ready_list,ready_list.last ,PCB_next);
+    List_detach((ListHead*)&waiting_list, (ListItem*)PCB_next);
+    List_insert((ListHead*)&ready_list,(ListItem*)ready_list.last ,(ListItem*)PCB_next);
 
     disastrOS_debug("il processo:%d è stato messo in ready\n", PCB_next->pid);
     printf("il processo:%d è stato messo in ready\n", PCB_next->pid);
 
-    //libero la memoria
-    SemDescriptorPtr_free(sem_des_ptr_next);
+    //libero la memoria: quando un processo viene bloccato da un semaforo 
+    //alloco un nuovo descrittore e un nuovo descrittore_ptr -> quindi ora libero
+    int tmp_des = SemDescriptor_free(sem_des_ptr_next->descriptor);
+    int tmp_des_ptr = SemDescriptorPtr_free(sem_des_ptr_next);
+
+    assert(tmp_des == 0 && tmp_des_ptr == 0);
 
     List_insert(&ready_list, ready_list.first, (ListItem*) PCB_next);
   }

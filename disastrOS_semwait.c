@@ -36,20 +36,19 @@ void internal_semWait(){
     //alloco il descrittore da mettere nella coda di wait del semaforo
     SemDescriptor* sem_des = SemDescriptor_alloc(fd, sem, running);
 
-    //alloco il SemDescriptorPtr relativo a sem_des 
+    //alloco il SemDescriptorPtr relativo a sem_des per metterlo nella coda dei descrittori in waiting
     SemDescriptorPtr* sem_des_ptr =SemDescriptorPtr_alloc(sem_des);
 
-    List_insert(&sem->waiting_descriptors, sem->waiting_descriptors.last, (ListItem*) sem_des_ptr);
+    List_insert((ListHead*)&sem->waiting_descriptors,(ListItem*) sem->waiting_descriptors.last, (ListItem*) sem_des_ptr);
     
     //inserisco il processo nella coda di wait
-    List_insert(&waiting_list, waiting_list.last,running);
-
+    List_insert((ListHead*)&waiting_list,(ListItem*) waiting_list.last,(ListItem*)running);
 
     //schedulo manualmente poichè la funzione che implementa lo scheduling setta a ready il processo
     //che ho appena settato a waiting
     PCB* PCB_next = (PCB*)List_detach(&ready_list, ready_list.first);
     running=PCB_next;
-    disastrOS_debug("il processo:%d è messo in running manualmente\n",running->pid);
+    disastrOS_debug("il processo:%d è messo in running manualmente\n",PCB_next->pid);    
   }
 
   running->syscall_retvalue = 0;

@@ -18,13 +18,7 @@ void sleeperFunction(void* args){
 void childFunction(void* args){
   printf("Hello, I am the child function %d\n",disastrOS_getpid());
   printf("I will iterate a bit, before terminating\n");
-  /* int type=0;
-  int mode=0;
-  int fd=disastrOS_openResource(disastrOS_getpid(),type,mode);
-  printf("fd=%d\n", fd);
-  printf("PID: %d, terminating\n", disastrOS_getpid()); */
 
-  // apro i semafori in ordine crescente
   for(int tmp_id = 0; tmp_id < MAX_NUM_SEMDESCRIPTORS_PER_PROCESS; tmp_id++){
     int tmp_sem = disastrOS_semOpen(tmp_id);
     assert(tmp_sem >= 0);
@@ -77,7 +71,9 @@ void childFunction(void* args){
 
     // critical section
     printf("processo %d in sezione critica!\n", disastrOS_getpid());
+    
     disastrOS_sleep((int)disastrOS_getpid()/2);
+    
     if(disastrOS_getpid() == 1 && i%50 == 0){
       disastrOS_printStatus();
     }
