@@ -57,8 +57,10 @@ void childFunction(void* args){
   // riapro il semaforo con id 0 -> avrò un fd diverso, ma le operazioni avverranno sullo stesso semaforo
   int sem3 = disastrOS_semOpen(0);
 
-  //controllo che i descrittori siano validi -> se negativi c'è stato un errore
-  assert(sem1 >= 0 && sem2 >= 0 && sem3 >= 0);
+  //controllo che i descrittori siano validi -> se negativi c'è stato un errore -> chiudo il processo
+  if(sem1 < 0 || sem2 < 0 || sem3 < 0){
+    disastrOS_exit(-1);
+  }
 
   for (int i=0; i<(disastrOS_getpid()+1); ++i){
     printf("PID: %d, iterate %d\n", disastrOS_getpid(), i);
@@ -66,8 +68,10 @@ void childFunction(void* args){
 
     // wait su i due semafori prima definiti 
     // sem2 non bloccherà mai il processo poichè solo lui sarà connesso a quel semaforo
-    disastrOS_semWait(sem1);
-    disastrOS_semWait(sem2);
+    int sem1_wait = disastrOS_semWait(sem1);
+    int sem2_wait = disastrOS_semWait(sem2);
+
+    assert(sem1_wait == 0 && sem2_wait == 0);
 
     // critical section
     printf("processo %d in sezione critica!\n", disastrOS_getpid());
@@ -80,8 +84,10 @@ void childFunction(void* args){
 
     // post 
     printf("processo %d è uscito dalla sezione critica!\n", disastrOS_getpid());
-    disastrOS_semPost(sem2);
-    disastrOS_semPost(sem3);
+    int sem2_post = disastrOS_semPost(sem2);
+    int sem3_post = disastrOS_semPost(sem3);
+
+    assert(sem2_post == 0 && sem3_post == 0);
 
   }
 

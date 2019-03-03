@@ -45,8 +45,7 @@ void internal_semPost(){
     printf("il processo:%d è stato messo in ready\n", PCB_next->pid);
 
     //libero la memoria: quando un processo viene bloccato da un semaforo 
-    //alloco un nuovo descrittore e un nuovo descrittore_ptr -> quindi ora libero
-    //int tmp_des = SemDescriptor_free(sem_des_ptr_next->descriptor);
+    //alloco un nuovo descrittore_ptr -> quindi ora libero
     int tmp_des_ptr = SemDescriptorPtr_free(sem_des_ptr_next);
 
     assert(tmp_des_ptr == 0);

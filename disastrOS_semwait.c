@@ -24,6 +24,8 @@ void internal_semWait(){
 
   Semaphore* sem = sem_des->semaphore;
 
+  PCB* old_running = running;
+
   //decremento il semaforo
   sem->count --;
   disastrOS_debug("il semaforo:%d è stato decrementato-> count:%d\n", sem->id, sem->count);
@@ -33,9 +35,6 @@ void internal_semWait(){
     disastrOS_debug("il processo:%d è in wait nel semaforo:%d\n",running->pid, sem->id);
     printf("il processo:%d è in wait nel semaforo:%d\n",running->pid, sem->id);
     
-    //alloco il descrittore da mettere nella coda di wait del semaforo
-    /* SemDescriptor* sem_des = SemDescriptor_alloc(fd, sem, running);
-    assert(sem_des); */
     //alloco il SemDescriptorPtr relativo a sem_des per metterlo nella coda dei descrittori in waiting
     SemDescriptorPtr* sem_des_ptr =SemDescriptorPtr_alloc(sem_des);
     assert(sem_des_ptr);
@@ -52,6 +51,6 @@ void internal_semWait(){
     disastrOS_debug("il processo:%d è messo in running manualmente\n",PCB_next->pid);    
   }
 
-  running->syscall_retvalue = 0;
+  old_running->syscall_retvalue = 0;
   return;
 }

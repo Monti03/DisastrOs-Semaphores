@@ -46,13 +46,13 @@ int sem_close(int fd)
 ##### DESCRIZIONE #####
 Chiude il semaforo (se il processo ha aperto più volte lo stesso semaforo, dovrà chiudere tutti i descrittori).  
 Libera SemDescriptor e SemDescriptorPtr rispettivamente presenti nella lista dei SemDescriptor del processo e nella lista dei SemDescriptorPtr del semaforo.
-Esegue l'operazione di unlink se nessun processo condivide quel semaforo: libera la memoria occupata dal semaforo.
+Se nessun processo condivide quel semafo erosegue l'operazione di unlink: libera la memoria occupata dal semaforo.
 
 ##### RETURN #####
 In caso di successo viene ritornato un intero maggiore o uguale di zero, in caso di errore un intero negativo
 
 ##### ERRORI ##### 
-DSOS_ESEM_DES_NOT_FOUD : il pile descriptor passato come parametro non è associato a nessun semaforo aperto  
+DSOS_ESEM_DES_NOT_FOUD : il file descriptor passato come parametro non è associato a nessun semaforo aperto dal processo  
 
 
 
@@ -65,13 +65,13 @@ int sem_wait(int fd)
 
 ##### DESCRIZIONE #####
 Decrementa il contatore del semaforo.
-Se il valore del contatore è minore o uguale a `-1` il processo è inserito nella waiting_list e sono allocati SemDescriptor e SemDescriptorPtr relativo. Quest'ultimo sarà inserito nella lista dei processi bloccati dal semaforo.
+Se il valore del contatore è minore o uguale a `-1` il processo è inserito nella waiting_list ed è allocato un SemDescriptorPtr che sarà inserito nella lista dei SemDescriptorPtr bloccati dal semaforo.
 
 ##### RETURN #####
 In caso di successo viene ritornato un intero maggiore o uguale di zero, in caso di errore un intero negativo
 
 ##### ERRORI ##### 
-DSOS_ESEM_DES_NOT_FOUD : il pile descriptor passato come parametro non è associato a nessun semaforo aperto  
+DSOS_ESEM_DES_NOT_FOUD : il file descriptor passato come parametro non è associato a nessun semaforo aperto dal processo  
 
 ### SEM_POST ###
 ```C  
@@ -82,16 +82,17 @@ int sem_post(int fd)
 
 ##### DESCRIZIONE #####
 Incrementa il contatore del semaforo.  
-Se il contatore diviene minore o uguale a zero viene rimosso un SemDescriptorPtr dalla lista dei processi bloccati dal semaforo, si ottiene il processo relativo che sarà inserito nella coda di ready. Le strutture allocate nella sem_wait saranno deallocate.
+Se il contatore diviene minore o uguale a zero viene rimosso un SemDescriptorPtr dalla lista dei processi bloccati dal semaforo, si ottiene il processo relativo che sarà inserito nella coda di ready. Il SemDescriptorPtr allocato nella sem_wait verrà liberato.
 
 ##### RETURN #####
 In caso di successo viene ritornato un intero maggiore o uguale di zero, in caso di errore un intero negativo
 
  ##### ERRORI ##### 
-DSOS_ESEM_DES_NOT_FOUD : il pile descriptor passato come parametro non è associato a nessun semaforo aperto 
+DSOS_ESEM_DES_NOT_FOUD: il file descriptor passato come parametro non è associato a nessun semaforo aperto dal processo 
 
 # ESECUZIONE
-Per eseguire il programma bisogna: compilare con il comando  
+Per eseguire il programma bisogna:  
+compilare con il comando  
 `make`  
 quindi eseguire con il comando  
 `./disastrOS_test`  
